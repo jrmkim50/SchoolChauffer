@@ -1,0 +1,50 @@
+<!DOCTYPE html>  
+<html> 
+    <head>
+    </head>      
+    <style>        
+        button {height: 10px;          
+                width: 10px;          
+                outline: none;
+        }   
+        #cancel {
+            height: 20px;
+            width: 20px;
+        }
+        
+        body, html {
+            height: 300px;
+            width: 400px;
+        }
+        .maincontent{
+            width : 100%;
+            display : flex;
+            display : -webkit-flex;
+            flex-direction : row;
+            -webkit-flex-direction : row;
+            justify-content : center;
+            align-items : center;
+        }
+        td, th {
+            border: 2px solid #852b2b00;
+            text-align: left;
+        }
+    </style>
+    <body>
+        <div class = "maincontent">
+            <p id="time"></p>
+        </div>
+            <table id = "schedule" >
+                <tbody id = "schedule body">
+                    <tr>
+                        <th>Class</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Zoom Link</th>
+                        <th><button id = "add"></button></th>
+                    </tr>
+                </tbody>
+            </table>
+        <script src="js/background.js"></script>
+    </body>
+</html>

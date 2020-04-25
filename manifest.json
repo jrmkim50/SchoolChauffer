@@ -1,0 +1,9 @@
+{   "name": "SchoolChauffer",    
+    "version": "1.0",
+    "description": "School Bell System!",
+    "manifest_version": 2, 
+    "background": { "scripts": ["js/background.js"], "persistent": true},
+    "browser_action": {"default_popup": "popup.html", 
+                    "default_icon": {} },    
+    "icons": {}
+}
