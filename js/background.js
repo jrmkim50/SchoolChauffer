@@ -159,7 +159,61 @@ function clear() {
     localStorage.clear();
 }
 
+var table = document.getElementById('schedule');
+navigator.serviceWorker.register("js/background.js");
+var classIndex = 0;
+
+function setDateTime(date, time) {
+    var index = time.indexOf("."); // replace with ":" for differently displayed time.
+    var index2 = time.indexOf(" ");
+
+    var hours = time.substring(0, index);
+    var minutes = time.substring(index + 1, index2);
+
+    var mer = time.substring(index2 + 1, time.length);
+    if (mer == "PM"){
+        hours = hours + 12;
+    }
+
+
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds("00");
+
+    return date;
+}
+
+function showNotification() {
+
+    setInterval(function() {
+        if (Date() == ) //add date to check there
+     }, 1000);
+
+    Notification.requestPermission(function(result) {
+        if ( result === 'granted') {
+            var date = new Date();
+
+            navigator.serviceWorker.ready.then(function(registration) {
+                registration.showNotification('You have class now', {
+                    actions: ['Go to class!', 'Not now.'],
+                    body: table.rows.item(classIndex).cells.item(0).innerHTML + 'is starting.',
+                    requireInteraction: true,
+                    tag: 'class-alert',
+                    timestamp: setDateTime(date, table.rows.item(classIndex).cells.item(1).textContent),
+                    vibrate: [200, 100, 200, 100, 200]
+                });
+            });
+          }
+        });
+    if (classIndex<table.rows.length) {
+         classIndex++;
+    }
+    else { 
+        classIndex = 0;
+    }
+}
 load("schedule", "scheduleTable");
 // clear()
 newRow();
 setupTable();
+showNotification();
