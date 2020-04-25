@@ -159,6 +159,32 @@ function clear() {
     localStorage.clear();
 }
 
+var table = document.getElementById('schedule');
+navigator.serviceWorker.register(background.js);
+var classIndex = 0;
+function showNotification() {
+    Notification.requestPermission(function(result) {
+        if ( result === 'granted') {
+            navigator.serviceWorker.ready.then(function(registration) {
+                registration.showNotification('You have class now', {
+                    actions: ['Go to class!', 'Not now.'],
+                    body: table.rows.item(classIndex).cells.item(0).innerHTML + 'is starting.',
+                    requireInteraction: true,
+                    tag: 'class-alert',
+                    timestamp: table.rows.item(classIndex).cells.item(1).innerHTML,
+                    vibrate: [200, 100, 200, 100, 200]
+                });
+            });
+          }
+        });
+    if (classIndex<table.rows.length) {
+         classIndex++;
+    }
+    else { 
+        classIndex = 0;
+    }
+    }
+
 load("schedule", "scheduleTable");
 // clear()
 newRow();
