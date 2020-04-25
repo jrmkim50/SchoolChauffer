@@ -160,19 +160,21 @@ function clear() {
 }
 
 var table = document.getElementById('schedule');
-navigator.serviceWorker.register("js/background.js");
 var classIndex = 0;
 
 function setDateTime(date, time) {
-    var index = time.indexOf("."); // replace with ":" for differently displayed time.
+    var index = time.indexOf(":"); // replace with ":" for differently displayed time.
     var index2 = time.indexOf(" ");
 
-    var hours = time.substring(0, index);
-    var minutes = time.substring(index + 1, index2);
+    var hours = parseInt(time.substring(0, index));
+    var minutes = parseInt(time.substring(index + 1, index2));
 
     var mer = time.substring(index2 + 1, time.length);
-    if (mer == "PM"){
+    if (mer == "PM" && hours != 12){
         hours = hours + 12;
+    }
+    if (mer == "AM" && hours == 12) {
+        hours = hours - 12;
     }
 
 
@@ -183,35 +185,57 @@ function setDateTime(date, time) {
     return date;
 }
 
-function showNotification() {
-
-    setInterval(function() {
-        if (Date() == ) //add date to check there
-     }, 1000);
-
-    Notification.requestPermission(function(result) {
-        if ( result === 'granted') {
-            var date = new Date();
-
-            navigator.serviceWorker.ready.then(function(registration) {
-                registration.showNotification('You have class now', {
-                    actions: ['Go to class!', 'Not now.'],
-                    body: table.rows.item(classIndex).cells.item(0).innerHTML + 'is starting.',
-                    requireInteraction: true,
-                    tag: 'class-alert',
-                    timestamp: setDateTime(date, table.rows.item(classIndex).cells.item(1).textContent),
-                    vibrate: [200, 100, 200, 100, 200]
-                });
-            });
-          }
-        });
-    if (classIndex<table.rows.length) {
-         classIndex++;
-    }
-    else { 
-        classIndex = 0;
-    }
+function makeNotification(className) {
+    var opt = {
+        iconUrl: "http://www.google.com/favicon.ico",
+        type: 'list',
+        title: 'Primary Title',
+        message: 'Primary message to display',
+        priority: 1,
+        items: [{ title: 'Item1', message: 'This is item 1.'},
+              { title: 'Item2', message: 'This is item 2.'},
+                { title: 'Item3', message: 'This is item 3.'}]
+    };
+    chrome.notifications.create('notify1', opt, function() { console.log('created!'); });      
 }
+  
+
+makeNotification("Hello")
+  
+
+function showNotification() {
+    setInterval(function() {
+        var startTimes = [];
+        var rows = document.getElementsByTagName("tr");
+        for (i = 2; i < rows.length; i++) {
+            var columns = rows[i].getElementsByTagName("td");
+            makeNotification(columns[0].textContent);
+            startTimes.push(columns[1].textContent);
+        }
+        // console.log(startTimes);
+        for (i = 0; i < startTimes.length; i++) {
+            var date = new Date();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+
+            var tableDate = new Date();
+            tableDate = setDateTime(tableDate, startTimes[i]);
+            var tableHours = tableDate.getHours();
+            var tableMinutes = tableDate.getMinutes();
+            var tableSeconds = tableDate.getSeconds();
+            if (hours == tableHours && 
+                minutes == tableMinutes && seconds == tableSeconds) {
+                    console.log("SUCCESS");
+                    var columns = rows[i].getElementsByTagName("td");
+                    makeNotification(columns[0].textContent);
+            } else {
+            }
+        }
+        
+     }, 1000);
+}
+
 load("schedule", "scheduleTable");
 // clear()
 newRow();
