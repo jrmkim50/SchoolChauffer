@@ -6,11 +6,10 @@
     "configurations": [
         
         {
+            "name": "Launch html",
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "file:///Users/min/Desktop/SchoolBell/popup.html",
-            "webRoot": "${workspaceFolder}"
+            "file": "${file}"
         }
     ]
 }
