@@ -7,12 +7,8 @@
         {
             "type": "chrome",
             "request": "launch",
-<<<<<<< HEAD
-            "url": "http://localhost:8080/",
-=======
             "name": "Launch Chrome against localhost",
             "url": "file:///Users/min/Desktop/SchoolBell/popup.html",
->>>>>>> 0c0e51d768a305d67f1322c9c8ab618e2de0292e
             "webRoot": "${workspaceFolder}"
         }
     ]
