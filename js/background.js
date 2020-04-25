@@ -7,6 +7,7 @@ function displayTime() {
 }
 
 displayTime()
+
 class ScheduleItem {
     constructor(name, startTime, endTime, link) {
         this.name = name;
@@ -14,6 +15,7 @@ class ScheduleItem {
         this.endTime = endTime;
         this.link = link;
     }
+
     addToTable() {
         var body = document.getElementsByTagName("body")[0];
         var tbl = document.getElementById("schedule");
@@ -25,22 +27,37 @@ class ScheduleItem {
             var cellText;
             switch(columnNum) {
                 case 0:
+                    cell.addEventListener("keyup", function() {
+                        save(tbl, "scheduleTable");
+                    })
                     cellText = document.createTextNode(this.name);
                     break;
                 case 1:
-                    cellText = document.createTextNode(this.startTime); 
+                    cell.addEventListener("keyup", function() {
+                        if (checkInput(this)) {
+                            save(tbl, "scheduleTable");
+                        }
+                    })
+                    cellText = document.createTextNode(this.startTime);
                     break;
                 case 2:
                     cellText = document.createTextNode(this.endTime);
+                    cell.addEventListener("keyup", function() {
+                        if (checkInput(this)) {
+                            save(tbl, "scheduleTable");
+                        }
+                    })
                     break;
                 case 3:
+                    cell.addEventListener("keyup", function() {
+                        save(tbl, "scheduleTable");
+                    })
                     cellText = document.createTextNode(this.link);
                     break;
                 case 4:
                     cellText = document.createElement("button")
-                    cellText.id = "delete"
                     cellText.onclick = function() {
-                        tblBody.removeChild(row);
+                        tblBody.removeChild(this.parentNode.parentNode);
                         localStorage.setItem("scheduleTable", tbl.innerHTML);
                     }
                     break;
@@ -48,11 +65,7 @@ class ScheduleItem {
                     break;
             }
             cell.appendChild(cellText);
-            cell.addEventListener("keyup", function() {
-                if (checkInput(cell, columnNum)) {
-                    save(tbl, "scheduleTable");
-                }
-            })
+
             if (columnNum == 4) {
                 cell.contentEditable = false;
                 cell.setAttribute("contenteditable", false);
@@ -75,41 +88,39 @@ function setupTable() {
     for (var i = 0; i < rows.length; i++) {
         var columns = rows[i].getElementsByTagName("td");
         for (var j = 0; j < columns.length; j++) {
-            console.log(j);
-            if (j == 4) {
-                var deleteButton = columns[j].getElementsByTagName("button")[0];
-                deleteButton.addEventListener("click", function() {
-                    var row = this.parentNode.parentNode
-                    row.parentNode.removeChild(row);
-                    save(tbl, "scheduleTable");
-                });
-            } else {
-                var cell = columns[j];
-                switch(j) {
-                    case 1:
-                        cell.addEventListener("keyup", function() {
-                            if (checkInput(this)) {
-                                save(tbl, "scheduleTable");
-                            } 
-                        })
-                        break;
-                    case 2:
-                        cell.addEventListener("keyup", function() {
-                            if (checkInput(this)) {
-                                save(tbl, "scheduleTable");
-                            }
-                        })
-                        break;
-                    default:
-                        cell.addEventListener("keyup", function() {
+            var cell = columns[j];
+            switch(j) {
+                case 1:
+                    cell.addEventListener("keyup", function() {
+                        if (checkInput(this)) {
                             save(tbl, "scheduleTable");
-                        })
-                        break;
-                }
+                        } 
+                    })
+                    break;
+                case 2:
+                    cell.addEventListener("keyup", function() {
+                        if (checkInput(this)) {
+                            save(tbl, "scheduleTable");
+                        }
+                    })
+                    break;
+                case 4:
+                    var deleteButton = cell.getElementsByTagName("button")[0];
+                    cell.addEventListener("click", function() {
+                        var row = this.parentNode
+                        row.parentNode.removeChild(row);
+                        save(tbl, "scheduleTable");
+                    });
+                default:
+                    cell.addEventListener("keyup", function() {
+                        save(tbl, "scheduleTable");
+                    })
+                    break;
             }
         }
     }
 }
+
 
 function myFunction() {
     document.getElementById("time").style.backgroundColor = "red";
@@ -117,11 +128,9 @@ function myFunction() {
 
 function checkInput(object) {
     var text = object.textContent;
-    var regex = new RegExp('(0[1-9]|1[012])[:]([0-5][0-9]) [A|P][M]')
-    if (regex.test(text)) {
-        return true;
-    }
-    return false;    
+    var regex = /([1-9]|1[012])[:]([0-5][0-9]) [A|P][M]/;
+    var match =  text.match(regex);
+    return match && text === match[0];
 }
 
 function newRow() {

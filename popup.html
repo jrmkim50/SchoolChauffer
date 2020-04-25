@@ -25,15 +25,17 @@
             justify-content : center;
             align-items : center;
         }
-        td, th {
-            border: 2px solid #852b2b00;
+        tr, th, td {
+            border: 1px solid black;
             text-align: left;
+        }
+        #schedule {
+            padding: 10px;
         }
     </style>
     <body>
         <div class = "maincontent">
             <p id="time"></p>
-            <button id = "save">S</button>
         </div>
             <table id = "schedule" >
                 <tbody id = "schedule body">
@@ -43,6 +45,13 @@
                         <th>End Time</th>
                         <th>Zoom Link</th>
                         <th><button id = "add"></button></th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>MUST use 12 hour format (ex: 10:30 AM)</td>
+                        <td>MUST use 12 hour format (ex: 10:30 AM)</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
