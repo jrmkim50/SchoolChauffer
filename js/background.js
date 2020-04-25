@@ -217,3 +217,8 @@ load("schedule", "scheduleTable");
 newRow();
 setupTable();
 showNotification();
+
+
+function openLink(link) { 
+    window.open(link); 
+} 
