@@ -160,7 +160,7 @@ function clear() {
 }
 
 var table = document.getElementById('schedule');
-navigator.serviceWorker.register(background.js);
+navigator.serviceWorker.register('background.js');
 var classIndex = 0;
 function showNotification() {
     Notification.requestPermission(function(result) {
