@@ -230,32 +230,34 @@ function main() {
 
 function iterate() {
     var events = getEvents();
-    // console.log(startTimes);
-    for (const event in events) {
-        var now = new Date();
-        var msFromDayToEpoch = Date.now();
-        msFromDayToEpoch -= msFromDayToEpoch % 86400000; // day in ms
 
-        msFromMinuteToDay = setDateTime(new Date(), events[event].startTime).getTime() % 86400000;
+    // TODO: stop alarms repreating over and over again
+    // TODO: stop alarms triggereding after the minute they are supposed to
+    // TODO: alert when the app is closed
 
-        var alarmInfo = {
-            when: msFromDayToEpoch + msFromMinuteToDay,
-        }
+    var now = new Date();
+    var msFromDayToEpoch = Date.now();
+    msFromDayToEpoch -= msFromDayToEpoch % 86400000; // day in ms
 
-        chrome.alarms.create(events[event].name, alarmInfo)
-        chrome.alarms.onAlarm.addListener(function (alarm) {
-            console.log(alarm.name)
-            var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
-            sendNotification(alarm.name, message, events[alarm.name].link);
-        })
+    msFromMinuteToDay = setDateTime(new Date(), events[event].startTime).getTime() % 86400000;
+
+    var alarmInfo = {
+        when: msFromDayToEpoch + msFromMinuteToDay, // every day at the specificed time
+    }
+
+    chrome.alarms.create(events[event].name, alarmInfo)
+    chrome.alarms.onAlarm.addListener(function (alarm) {
+        console.log(alarm.name)
+        var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
+        sendNotification(alarm.name, message, events[alarm.name].link);
+    })
+}
 
         // if (eventTime == now) {
         //     console.log("SUCCESS");
         //     var message = "Your " + event.startTime + "class is starting, click here to join!";
         //     sendNotification(event.name, message, event.link);
         // }
-    }
-}
 
 load("schedule", "scheduleTable");
 // clear()
