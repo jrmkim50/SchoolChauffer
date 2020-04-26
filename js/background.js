@@ -231,7 +231,7 @@ function iterate() {
 
         if (eventTime == now) {
             console.log("SUCCESS");
-            var message = "Your" + event.startTime + "class is starting, click here to join!";
+            var message = "Your " + event.startTime + "class is starting, click here to join!";
             sendNotification(event.name, message, event.link);
         }
     }
