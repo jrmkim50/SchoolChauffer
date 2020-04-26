@@ -235,22 +235,25 @@ function iterate() {
     // TODO: stop alarms triggereding after the minute they are supposed to
     // TODO: alert when the app is closed
 
-    var now = new Date();
-    var msFromDayToEpoch = Date.now();
-    msFromDayToEpoch -= msFromDayToEpoch % 86400000; // day in ms
+    for (const event in events) {
 
-    msFromMinuteToDay = setDateTime(new Date(), events[event].startTime).getTime() % 86400000;
+        var now = new Date();
+        var msFromDayToEpoch = Date.now();
+        msFromDayToEpoch -= msFromDayToEpoch % 86400000; // day in ms
 
-    var alarmInfo = {
-        when: msFromDayToEpoch + msFromMinuteToDay, // every day at the specificed time
+        msFromMinuteToDay = setDateTime(new Date(), events[event].startTime).getTime() % 86400000;
+
+        var alarmInfo = {
+            when: msFromDayToEpoch + msFromMinuteToDay, // every day at the specificed time
+        }
+
+        chrome.alarms.create(events[event].name, alarmInfo)
+        chrome.alarms.onAlarm.addListener(function (alarm) {
+            console.log(alarm.name)
+            var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
+            sendNotification(alarm.name, message, events[alarm.name].link);
+        })
     }
-
-    chrome.alarms.create(events[event].name, alarmInfo)
-    chrome.alarms.onAlarm.addListener(function (alarm) {
-        console.log(alarm.name)
-        var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
-        sendNotification(alarm.name, message, events[alarm.name].link);
-    })
 }
 
 // if (eventTime == now) {
