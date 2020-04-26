@@ -185,54 +185,53 @@ function setDateTime(date, time) {
     return date;
 }
 
-function makeNotification(className) {
+// 
+function sendNotification(title, message, link) {
     var opt = {
-        iconUrl: "http://www.google.com/favicon.ico",
-        type: 'list',
-        title: 'Primary Title',
-        message: 'Primary message to display',
+        iconUrl: "images/logo.png",
+        type: 'basic',
+        title: title,
+        message: message,
         priority: 1,
-        items: [{ title: 'Item1', message: 'This is item 1.' },
-        { title: 'Item2', message: 'This is item 2.' },
-        { title: 'Item3', message: 'This is item 3.' }]
     };
     chrome.notifications.create('notify1', opt, function () { console.log('created!'); });
+    chrome.notifications.onClicked.addListener(function (notifId) {
+        chrome.notifications.clear(notifId);
+        console.log("BUTTON CLİCKED");
+        window.open(link);
+    });
 }
 
+function getEvents() {
+    var events = []
 
-makeNotification("Hello")
+    var rows = document.getElementsByTagName("tr");
+    for (i = 2; i < rows.length; i++) {
+        var columns = rows[i].getElementsByTagName("td");
+        events.push(new ScheduleItem(columns[0].textContent, columns[1].textContent, "0", columns[3].textContent));
+    }
 
+    return events;
+}
 
 function showNotification() {
     setInterval(function () {
-        var startTimes = [];
-        var rows = document.getElementsByTagName("tr");
-        for (i = 2; i < rows.length; i++) {
-            var columns = rows[i].getElementsByTagName("td");
-            makeNotification(columns[0].textContent);
-            startTimes.push(columns[1].textContent);
-        }
+        var events = getEvents();
         // console.log(startTimes);
-        for (i = 0; i < startTimes.length; i++) {
-            var date = new Date();
-            var hours = date.getHours();
-            var minutes = date.getMinutes();
-            var seconds = date.getSeconds();
+        for (const event of events) {
+            var now = new Date();
+            now = 60 * now.getHours() + now.getMinutes;
 
-            var tableDate = new Date();
-            tableDate = setDateTime(tableDate, startTimes[i]);
-            var tableHours = tableDate.getHours();
-            var tableMinutes = tableDate.getMinutes();
-            var tableSeconds = tableDate.getSeconds();
-            if (hours == tableHours &&
-                minutes == tableMinutes && seconds == tableSeconds) {
+            var eventTime = new Date();
+            eventTime = setDateTime(eventTime, event.startTime);
+            eventTime = 60 * eventTime.getHours() + eventTime.getMinutes;
+
+            if (eventTime == now) {
                 console.log("SUCCESS");
-                var columns = rows[i].getElementsByTagName("td");
-                makeNotification(columns[0].textContent);
-            } else {
+                var message = "Your" + event.startTime + "class is starting, click here to join!";
+                sendNotification(event.name, message, event.link);
             }
         }
-
     }, 1000);
 }
 
@@ -241,8 +240,3 @@ load("schedule", "scheduleTable");
 newRow();
 setupTable();
 showNotification();
-
-
-function openLink(link) {
-    window.open(link);
-} 
