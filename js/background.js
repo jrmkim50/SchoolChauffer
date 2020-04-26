@@ -250,7 +250,7 @@ function iterate() {
         chrome.alarms.create(events[event].name, alarmInfo) // heres the docs https://developer.chrome.com/extensions/alarms#method-getAll
         chrome.alarms.onAlarm.addListener(function (alarm) {
             console.log(alarm.name)
-            var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
+            var message = "Your " + events[alarm.name].startTime + " class is starting, click here to join!";
             sendNotification(alarm.name, message, events[alarm.name].link);
         })
     }
