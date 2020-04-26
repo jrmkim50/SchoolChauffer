@@ -214,29 +214,31 @@ function getEvents() {
     return events;
 }
 
-function showNotification() {
-    setInterval(function () {
-        var events = getEvents();
-        // console.log(startTimes);
-        for (const event of events) {
-            var now = new Date();
-            now = 60 * now.getHours() + now.getMinutes;
+function main() {
+    setInterval(iterate(), 1000);
+}
 
-            var eventTime = new Date();
-            eventTime = setDateTime(eventTime, event.startTime);
-            eventTime = 60 * eventTime.getHours() + eventTime.getMinutes;
+function iterate() {
+    var events = getEvents();
+    // console.log(startTimes);
+    for (const event of events) {
+        var now = new Date();
+        now = 60 * now.getHours() + now.getMinutes;
 
-            if (eventTime == now) {
-                console.log("SUCCESS");
-                var message = "Your" + event.startTime + "class is starting, click here to join!";
-                sendNotification(event.name, message, event.link);
-            }
+        var eventTime = new Date();
+        eventTime = setDateTime(eventTime, event.startTime);
+        eventTime = 60 * eventTime.getHours() + eventTime.getMinutes;
+
+        if (eventTime == now) {
+            console.log("SUCCESS");
+            var message = "Your" + event.startTime + "class is starting, click here to join!";
+            sendNotification(event.name, message, event.link);
         }
-    }, 1000);
+    }
 }
 
 load("schedule", "scheduleTable");
 // clear()
 newRow();
 setupTable();
-showNotification();
+main();
