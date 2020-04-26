@@ -200,7 +200,7 @@ function sendNotification(title, message, link) {
         for (const notifID in notifications) { chrome.notifications.clear(notifID) }
     });
 
-    chrome.notifications.create('notify1', opt, function () { console.log('created!'); });
+    chrome.notifications.create(title, opt, function () { console.log('created!'); });
     chrome.notifications.onClicked.addListener(function (notifId) {
         chrome.notifications.clear(notifId);
         console.log("BUTTON CLİCKED");
@@ -209,19 +209,20 @@ function sendNotification(title, message, link) {
 }
 
 function getEvents() {
-    var events = []
+    var events = {}
 
     var rows = document.getElementsByTagName("tr");
     for (i = 2; i < rows.length; i++) {
         var columns = rows[i].getElementsByTagName("td");
-        events.push(new ScheduleItem(columns[0].textContent, columns[1].textContent, "0", columns[3].textContent));
+        var name = columns[0].textContent;
+        events[name] = new ScheduleItem(name, columns[1].textContent, "0", columns[3].textContent);
     }
 
     return events;
 }
 
 function main() {
-    var timer = new interval(31000, function () {
+    var timer = new interval(5000, function () {
         iterate();
     })
     timer.run()
@@ -230,22 +231,29 @@ function main() {
 function iterate() {
     var events = getEvents();
     // console.log(startTimes);
-    for (const event of events) {
+    for (const event in events) {
         var now = new Date();
-        now = 60 * now.getHours() + now.getMinutes();
+        var msFromDayToEpoch = Date.now();
+        msFromDayToEpoch -= msFromDayToEpoch % 86400000; // day in ms
 
-        var eventTime = new Date();
-        eventTime = setDateTime(eventTime, event.startTime);
-        eventTime = 60 * eventTime.getHours() + eventTime.getMinutes();
+        msFromMinuteToDay = setDateTime(new Date(), events[event].startTime).getTime() % 86400000;
 
-        console.log(eventTime);
-        console.log(now);
-
-        if (eventTime == now) {
-            console.log("SUCCESS");
-            var message = "Your " + event.startTime + "class is starting, click here to join!";
-            sendNotification(event.name, message, event.link);
+        var alarmInfo = {
+            when: msFromDayToEpoch + msFromMinuteToDay,
         }
+
+        chrome.alarms.create(events[event].name, alarmInfo)
+        chrome.alarms.onAlarm.addListener(function (alarm) {
+            console.log(alarm.name)
+            var message = "Your " + events[alarm.name].startTime + "class is starting, click here to join!";
+            sendNotification(alarm.name, message, events[alarm.name].link);
+        })
+
+        // if (eventTime == now) {
+        //     console.log("SUCCESS");
+        //     var message = "Your " + event.startTime + "class is starting, click here to join!";
+        //     sendNotification(event.name, message, event.link);
+        // }
     }
 }
 
