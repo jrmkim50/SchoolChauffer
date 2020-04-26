@@ -253,11 +253,11 @@ function iterate() {
     })
 }
 
-        // if (eventTime == now) {
-        //     console.log("SUCCESS");
-        //     var message = "Your " + event.startTime + "class is starting, click here to join!";
-        //     sendNotification(event.name, message, event.link);
-        // }
+// if (eventTime == now) {
+//     console.log("SUCCESS");
+//     var message = "Your " + event.startTime + "class is starting, click here to join!";
+//     sendNotification(event.name, message, event.link);
+// }
 
 load("schedule", "scheduleTable");
 // clear()
