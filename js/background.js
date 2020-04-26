@@ -194,6 +194,12 @@ function sendNotification(title, message, link) {
         message: message,
         priority: 1,
     };
+
+    // clears all prexisting notifications
+    chrome.notifications.getAll(function (notifications) {
+        for (const notifID in notifications) { chrome.notifications.clear(notifID) }
+    });
+
     chrome.notifications.create('notify1', opt, function () { console.log('created!'); });
     chrome.notifications.onClicked.addListener(function (notifId) {
         chrome.notifications.clear(notifId);
@@ -223,11 +229,14 @@ function iterate() {
     // console.log(startTimes);
     for (const event of events) {
         var now = new Date();
-        now = 60 * now.getHours() + now.getMinutes;
+        now = 60 * now.getHours() + now.getMinutes();
 
         var eventTime = new Date();
         eventTime = setDateTime(eventTime, event.startTime);
-        eventTime = 60 * eventTime.getHours() + eventTime.getMinutes;
+        eventTime = 60 * eventTime.getHours() + eventTime.getMinutes();
+
+        console.log(eventTime);
+        console.log(now);
 
         if (eventTime == now) {
             console.log("SUCCESS");
